@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.agent import AgentSpec
 from app.core.config import Settings, get_settings
 from app.core.database import create_tables, make_session_factory
 from app.core.router import router as core_router
@@ -27,13 +28,19 @@ async def lifespan(app: FastAPI):
     app.state.engine.dispose()
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+# Các bài đã làm. Mỗi bài khai báo một AgentSpec trong modules/<bài>/agent.py
+AGENTS: list[AgentSpec] = []
+
+
+def create_app(settings: Settings | None = None, agents: list[AgentSpec] | None = None) -> FastAPI:
     """
     Tạo FastAPI app.
 
     Args:
         settings (Settings | None, optional): Cấu hình. Test truyền vào để dùng
             SQLite tạm và chế độ mock. Defaults to get_settings().
+        agents (list[AgentSpec] | None, optional): Các bài được chat. Test truyền bài giả.
+            Defaults to AGENTS.
 
     Returns:
         FastAPI: App đã gắn database, CORS và các router.
@@ -46,6 +53,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.engine = engine
     app.state.session_factory = session_factory
     app.state.settings = settings
+    app.state.agents = {spec.module: spec for spec in (AGENTS if agents is None else agents)}
 
     # Cho phép frontend (Next.js) gọi API từ trình duyệt
     app.add_middleware(

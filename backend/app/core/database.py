@@ -45,7 +45,9 @@ def make_session_factory(database_url: str):
 
 def create_tables(engine: Engine) -> None:
     """Tạo các bảng còn thiếu. Gọi khi app khởi động."""
-    # Module nào có bảng thì import ở đây để SQLAlchemy biết
+    # Import để SQLAlchemy biết có những bảng nào
+    from app.core import entities  # noqa: F401
+
     Base.metadata.create_all(bind=engine)
 
 
