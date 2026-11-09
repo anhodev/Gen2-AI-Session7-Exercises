@@ -47,6 +47,7 @@ def create_tables(engine: Engine) -> None:
     """Tạo các bảng còn thiếu. Gọi khi app khởi động."""
     # Import để SQLAlchemy biết có những bảng nào
     from app.core import entities  # noqa: F401
+    from app.modules.invoices import entities as invoice_entities  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 

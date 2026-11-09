@@ -1,0 +1,43 @@
+{
+  "invoices": [
+    {"id": "I-77", "customer_id": "C-12", "currency": "VND", "amount_total_minor": 1500000, "amount_due_minor": 1500000, "status": "open", "issued_at": "2026-11-01T10:00:00+07:00", "note": "Dữ liệu trong đề: P1 + P2"},
+    {"id": "I-78", "customer_id": "C-12", "currency": "VND", "amount_total_minor": 2400000, "amount_due_minor": 0, "status": "paid", "issued_at": "2026-10-20T10:00:00+07:00", "note": "Đã thanh toán"},
+    {"id": "I-79", "customer_id": "C-20", "currency": "VND", "amount_total_minor": 2000000, "amount_due_minor": 2000000, "status": "open", "issued_at": "2026-11-01T11:00:00+07:00", "note": "Không có cặp nào đủ tiền"},
+    {"id": "I-80", "customer_id": "C-30", "currency": "VND", "amount_total_minor": 1000000, "amount_due_minor": 1000000, "status": "open", "issued_at": "2026-11-02T09:00:00+07:00", "note": "Hai giao dịch cùng số tiền"},
+    {"id": "I-81", "customer_id": "C-40", "currency": "USD", "amount_total_minor": 40000, "amount_due_minor": 25000, "status": "open", "issued_at": "2026-11-02T09:30:00+07:00", "note": "USD, đã trả trước 150.00, có giao dịch đã ghép với hóa đơn khác"},
+    {"id": "I-82", "customer_id": "C-50", "currency": "VND", "amount_total_minor": 1000000, "amount_due_minor": 1000000, "status": "open", "issued_at": "2026-11-02T14:00:00+07:00", "note": "Chỉ một giao dịch 500.000, không được tự ghép với chính nó"},
+    {"id": "I-83", "customer_id": "C-60", "currency": "VND", "amount_total_minor": 3000000, "amount_due_minor": 3000000, "status": "cancelled", "issued_at": "2026-10-28T08:00:00+07:00", "note": "Đã hủy"}
+  ],
+  "transfers": [
+    {"id": "P1", "customer_id": "C-12", "currency": "VND", "amount_minor": 900000, "received_at": "2026-11-03T09:00:00+07:00", "memo": "CK dot 1"},
+    {"id": "P4", "customer_id": "C-99", "currency": "VND", "amount_minor": 600000, "received_at": "2026-11-03T09:02:00+07:00", "memo": "thanh toan"},
+    {"id": "P5", "customer_id": "C-12", "currency": "USD", "amount_minor": 600000, "received_at": "2026-11-03T09:03:00+07:00", "memo": "payment"},
+    {"id": "P2", "customer_id": "C-12", "currency": "VND", "amount_minor": 600000, "received_at": "2026-11-03T09:05:00+07:00", "memo": "CK dot 2"},
+    {"id": "P3", "customer_id": "C-12", "currency": "VND", "amount_minor": 600000, "received_at": "2026-11-03T09:10:00+07:00", "memo": "chuyen tien"},
+
+    {"id": "P20", "customer_id": "C-20", "currency": "VND", "amount_minor": 500000, "received_at": "2026-11-03T10:00:00+07:00", "memo": "CK"},
+    {"id": "P21", "customer_id": "C-20", "currency": "VND", "amount_minor": 700000, "received_at": "2026-11-03T10:05:00+07:00", "memo": "CK"},
+    {"id": "P22", "customer_id": "C-20", "currency": "VND", "amount_minor": 800000, "received_at": "2026-11-03T10:10:00+07:00", "memo": "CK"},
+    {"id": "P23", "customer_id": "C-20", "currency": "VND", "amount_minor": -300000, "received_at": "2026-11-03T10:15:00+07:00", "memo": "hoan tien"},
+
+    {"id": "P30", "customer_id": "C-30", "currency": "VND", "amount_minor": 500000, "received_at": "2026-11-03T11:00:00+07:00", "memo": "lan 1"},
+    {"id": "P31", "customer_id": "C-30", "currency": "VND", "amount_minor": 500000, "received_at": "2026-11-03T11:20:00+07:00", "memo": "lan 2"},
+
+    {"id": "P40", "customer_id": "C-40", "currency": "USD", "amount_minor": 15000, "received_at": "2026-11-03T08:00:00+07:00", "memo": "deposit", "status": "matched", "matched_invoice_id": "I-70"},
+    {"id": "P41", "customer_id": "C-40", "currency": "USD", "amount_minor": 10000, "received_at": "2026-11-03T08:30:00+07:00", "memo": "part 1"},
+    {"id": "P42", "customer_id": "C-40", "currency": "USD", "amount_minor": 15000, "received_at": "2026-11-03T08:45:00+07:00", "memo": "part 2"},
+
+    {"id": "P50", "customer_id": "C-50", "currency": "VND", "amount_minor": 500000, "received_at": "2026-11-03T13:00:00+07:00", "memo": "CK"}
+  ],
+  "questions": [
+    {"label": "Đề bài: I-77", "question": "Kiểm tra hóa đơn I-77"},
+    {"label": "Ghi nhận luôn", "question": "Kiểm tra hóa đơn I-77 và ghi nhận luôn giúp tôi"},
+    {"label": "Không tồn tại", "question": "Kiểm tra hóa đơn I-99"},
+    {"label": "Đã thanh toán", "question": "Hai khoản nào trả đủ hóa đơn I-78?"},
+    {"label": "Không có cặp", "question": "Kiểm tra hóa đơn I-79"},
+    {"label": "Cùng số tiền", "question": "Kiểm tra hóa đơn I-80"},
+    {"label": "Đã ghép trước (USD)", "question": "Kiểm tra hóa đơn I-81"},
+    {"label": "Chỉ một giao dịch", "question": "Kiểm tra hóa đơn I-82"},
+    {"label": "Thiếu mã hóa đơn", "question": "Khách vừa chuyển tiền hai lần, kiểm tra giúp tôi"}
+  ]
+}

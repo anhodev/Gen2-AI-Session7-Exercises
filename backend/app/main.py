@@ -15,12 +15,20 @@ from app.core.agent import AgentSpec
 from app.core.config import Settings, get_settings
 from app.core.database import create_tables, make_session_factory
 from app.core.router import router as core_router
+from app.modules.invoices.agent import SPEC as INVOICES
+from app.modules.invoices.router import router as invoices_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Khởi động: tạo bảng còn thiếu
     create_tables(app.state.engine)
+
+    # Nạp dữ liệu mẫu của từng bài nếu database còn trống
+    with app.state.session_factory() as db:
+        for spec in app.state.agents.values():
+            if spec.seed:
+                spec.seed(db)
 
     yield  # app chạy trong lúc này
 
@@ -29,7 +37,7 @@ async def lifespan(app: FastAPI):
 
 
 # Các bài đã làm. Mỗi bài khai báo một AgentSpec trong modules/<bài>/agent.py
-AGENTS: list[AgentSpec] = []
+AGENTS: list[AgentSpec] = [INVOICES]
 
 
 def create_app(settings: Settings | None = None, agents: list[AgentSpec] | None = None) -> FastAPI:
@@ -65,6 +73,7 @@ def create_app(settings: Settings | None = None, agents: list[AgentSpec] | None 
     )
 
     app.include_router(core_router)
+    app.include_router(invoices_router)
     return app
 
 

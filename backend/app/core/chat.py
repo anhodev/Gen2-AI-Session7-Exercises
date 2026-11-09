@@ -5,6 +5,7 @@ from __future__ import annotations
 import time
 import uuid
 from typing import Callable
+from zoneinfo import ZoneInfo
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
@@ -73,7 +74,8 @@ def ask(
     db.commit()
     db.refresh(run)
 
-    ctx = ToolContext(db=db, module=spec.module, run_id=run.id, conversation_id=conversation_id)
+    ctx = ToolContext(db=db, module=spec.module, run_id=run.id, conversation_id=conversation_id,
+                      tz=ZoneInfo(settings.app_timezone))
 
     def after_tool(record: ToolCallRecord) -> None:
         # Công cụ lỗi giữa chừng có thể để session hỏng; rollback để công cụ sau vẫn đọc được

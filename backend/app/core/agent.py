@@ -21,6 +21,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_core.tools import BaseTool
 from pydantic import ValidationError
+from sqlalchemy.orm import Session
 
 from .config import Settings
 from .mock_model import MockChatModel, Planner
@@ -40,6 +41,8 @@ class AgentSpec:
     # Hàm chạy khi người duyệt bấm "Duyệt" một đề xuất, theo loại đề xuất.
     # Hàm kiểm tra lại dữ liệu mới nhất rồi mới thay đổi; lỗi thì raise ProposalConflict.
     approval_handlers: dict[str, ApprovalHandler] = field(default_factory=dict)
+    # Nạp dữ liệu mẫu của bài nếu database còn trống, chạy lúc app khởi động
+    seed: Callable[[Session], None] | None = None
 
 
 @dataclass

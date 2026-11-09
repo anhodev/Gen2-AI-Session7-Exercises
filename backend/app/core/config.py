@@ -3,6 +3,7 @@
 import os
 from dataclasses import dataclass
 from functools import lru_cache
+from pathlib import Path
 from urllib.parse import quote_plus
 
 from dotenv import load_dotenv
@@ -11,6 +12,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SQLITE_FALLBACK = "sqlite:///./data/app.db"
+
+# Dữ liệu mẫu của các bài (JSON), nạp vào database lúc khởi động
+SAMPLES_DIR = Path(__file__).resolve().parents[2] / "samples"
 
 
 @dataclass(frozen=True)

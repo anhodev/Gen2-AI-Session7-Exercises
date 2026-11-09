@@ -9,6 +9,7 @@ Mỗi công cụ có một loại (kind):
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import timezone, tzinfo
 from typing import Literal
 
 from langchain_core.tools import BaseTool
@@ -52,6 +53,7 @@ class ToolContext:
     module: str
     run_id: int
     conversation_id: str
+    tz: tzinfo = timezone.utc  # múi giờ hiển thị giờ trong kết quả công cụ (APP_TIMEZONE)
     # Những gì các công cụ đã đọc trong câu hỏi này, vd phiên bản sơ đồ dịch vụ.
     # Công cụ thuật toán so với dữ liệu mới nhất để biết dữ liệu có đổi giữa chừng không.
     seen: dict = field(default_factory=dict)
