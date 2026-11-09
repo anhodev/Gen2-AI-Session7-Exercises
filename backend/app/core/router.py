@@ -47,6 +47,7 @@ def health(request: Request):
         "status": "ok",
         "llm": "mock" if settings.use_mock else settings.openai_model,
         "database": request.app.state.engine.dialect.name,  # postgresql hoặc sqlite
+        "timezone": settings.app_timezone,  # giao diện đổi giờ UTC (lịch sử, đề xuất) sang múi giờ này
     }
 
 

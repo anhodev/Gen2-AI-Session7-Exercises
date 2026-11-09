@@ -63,4 +63,4 @@ def test_health_reports_mock_and_sqlite(tmp_path):
     app = create_app(Settings(database_url=f"sqlite:///{tmp_path}/t.db", mock_llm=True))
     with TestClient(app) as client:
         body = client.get("/health").json()
-    assert body == {"status": "ok", "llm": "mock", "database": "sqlite"}
+    assert body == {"status": "ok", "llm": "mock", "database": "sqlite", "timezone": "Asia/Ho_Chi_Minh"}

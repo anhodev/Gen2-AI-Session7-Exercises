@@ -1,5 +1,5 @@
 // Gọi FastAPI. Cách viết lấy từ buổi 4: một hàm request() dùng chung, đọc lỗi từ "detail".
-import type { Health } from "./types";
+import type { Health, InvoiceData, Module, Proposal, ProposalStatus, RunDetail, SampleQuestion } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
@@ -37,6 +37,23 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return response.json();
 }
 
+const post = <T>(path: string, body?: unknown) =>
+  request<T>(path, { method: "POST", body: body === undefined ? undefined : JSON.stringify(body) });
+
 export const api = {
   health: () => request<Health>("/health"),
+
+  // Chat dùng chung cho cả 4 bài
+  chat: (module: Module, question: string, conversationId: string | null) =>
+    post<RunDetail>("/chat", { module, question, conversation_id: conversationId }),
+  run: (id: number) => request<RunDetail>(`/runs/${id}`),
+  proposals: (module: Module, status?: ProposalStatus) =>
+    request<Proposal[]>(`/proposals?module=${module}${status ? `&status=${status}` : ""}`),
+  decide: (id: number, action: "approve" | "reject", reviewer: string, note: string) =>
+    post<Proposal>(`/proposals/${id}/${action}`, { reviewer, note: note || null }),
+
+  // Bài 01
+  invoiceSamples: () => request<SampleQuestion[]>("/invoices/samples"),
+  invoiceData: () => request<InvoiceData>("/invoices/data"),
+  resetInvoices: () => post<{ status: string; closed_proposals: number }>("/invoices/reset"),
 };

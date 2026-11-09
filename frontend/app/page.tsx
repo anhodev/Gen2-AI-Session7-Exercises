@@ -7,13 +7,15 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { api } from "@/lib/api";
+import { setDisplayTimezone } from "@/lib/format";
 import type { Health } from "@/lib/types";
 import { Empty } from "@/components/ui";
+import { InvoicesPage } from "@/components/invoices";
 
 type View = "invoices" | "capacity" | "notifications" | "incidents" | "history";
 
 const NAV: { id: View; label: string; icon: LucideIcon; ready: boolean }[] = [
-  { id: "invoices", label: "01 · Đối soát hóa đơn", icon: ReceiptText, ready: false },
+  { id: "invoices", label: "01 · Đối soát hóa đơn", icon: ReceiptText, ready: true },
   { id: "capacity", label: "02 · Công suất máy", icon: Factory, ready: false },
   { id: "notifications", label: "03 · Lịch gửi thông báo", icon: BellRing, ready: false },
   { id: "incidents", label: "04 · Tác động sự cố", icon: Network, ready: false },
@@ -34,7 +36,7 @@ export default function Home() {
   const [connected, setConnected] = useState(true);
 
   useEffect(() => {
-    api.health().then((h) => { setHealth(h); setConnected(true); }).catch(() => setConnected(false));
+    api.health().then((h) => { setDisplayTimezone(h.timezone); setHealth(h); setConnected(true); }).catch(() => setConnected(false));
   }, []);
 
   const navigate = (next: View) => { setView(next); setMobileNav(false); };
@@ -82,7 +84,9 @@ export default function Home() {
         {!connected && (
           <div className="offline-banner"><AlertTriangle size={16} /> Chưa kết nối được backend. Chạy FastAPI ở cổng 8000: <code>cd backend && myenv/bin/uvicorn app.main:app --reload --reload-dir app</code></div>
         )}
-        <section className="panel"><Empty icon={Wrench} text="Đang làm, sẽ có ở các bước sau." /></section>
+        {/* Giữ trang đã mở để không mất hội thoại khi chuyển qua lại giữa các bài */}
+        <div hidden={view !== "invoices"}><InvoicesPage /></div>
+        {view !== "invoices" && <section className="panel"><Empty icon={Wrench} text="Đang làm, sẽ có ở các bước sau." /></section>}
       </main>
     </div>
   );
