@@ -192,3 +192,66 @@ export interface MachineChange {
   rate_per_hour?: number;
   status?: "available" | "busy" | "maintenance";
 }
+
+// --- Bài 03: lịch gửi thông báo -----------------------------------------------------
+
+export type OptIn = "yes" | "no" | "unknown" | "not_found";
+export type SlotState = "send" | "idle" | "unused";
+
+export interface ScheduleSlot {
+  index: number;
+  start: string; // "09:00"
+  end: string;
+  state: SlotState;
+  message_id: string | null;
+  customer_id: string | null;
+  title: string | null;
+}
+
+export interface ScheduledMessage {
+  message_id: string;
+  customer_id: string;
+  title: string;
+  reason: string;
+}
+
+/** Kết quả công cụ build_send_schedule */
+export interface ScheduleResult {
+  campaign_id: string;
+  campaign_name: string;
+  send_date: string;
+  policy: { slot_count: number; slot_minutes: number; gap: number; max_per_slot: number; window: string | null };
+  status: "ok" | "partial" | "no_messages";
+  total_pending: number;
+  scheduled_count: number;
+  idle_count: number;
+  unused_count: number;
+  last_send_time: string | null;
+  slots: ScheduleSlot[];
+  unscheduled: ScheduledMessage[];
+  excluded: (ScheduledMessage & { opt_in: OptIn; reason_code: string })[];
+  customers: { customer_id: string; opt_in: OptIn; slots: number[]; times: string[] }[];
+  trace: {
+    slot: number;
+    start: string;
+    ready: { customer_id: string; remaining: number }[];
+    waiting: { customer_id: string; ready_at: number; ready_time: string }[];
+    picked: string | null;
+  }[];
+  violations: string[];
+  data_changed: { customer_id: string; before: string; now: string }[];
+  rule: string;
+}
+
+export interface NotificationData {
+  campaigns: {
+    campaign_id: string; name: string; send_date: string; first_slot: string;
+    slot_minutes: number; slot_count: number; max_per_slot: number; gap: number;
+  }[];
+  sources: { source_id: string; name: string; available: boolean }[];
+  customers: { customer_id: string; name: string; source_id: string; opt_in: OptIn; version: number }[];
+  messages: {
+    message_id: string; campaign_id: string; customer_id: string; title: string;
+    status: "pending" | "scheduled"; scheduled_at: string | null;
+  }[];
+}

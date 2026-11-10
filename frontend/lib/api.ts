@@ -1,5 +1,5 @@
 // Gọi FastAPI. Cách viết lấy từ buổi 4: một hàm request() dùng chung, đọc lỗi từ "detail".
-import type { CapacityData, Health, InvoiceData, MachineChange, Module, Proposal, ProposalStatus, RunDetail, SampleQuestion } from "./types";
+import type { CapacityData, Health, InvoiceData, MachineChange, Module, NotificationData, Proposal, ProposalStatus, RunDetail, SampleQuestion } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
@@ -65,5 +65,18 @@ export const api = {
   changeMachine: (id: string, change: MachineChange) =>
     request<{ machine_id: string; rate_per_hour: number; status: string; version: number }>(
       `/capacity/machines/${id}`, { method: "PATCH", body: JSON.stringify(change) },
+    ),
+
+  // Bài 03. Hai API PATCH là thao tác của người dùng để thử dữ liệu đổi / nguồn lỗi, không phải công cụ của AI.
+  notificationSamples: () => request<SampleQuestion[]>("/notifications/samples"),
+  notificationData: () => request<NotificationData>("/notifications/data"),
+  resetNotifications: () => post<{ status: string; closed_proposals: number }>("/notifications/reset"),
+  changeConsent: (customerId: string, optIn: boolean | null) =>
+    request<{ customer_id: string; opt_in: string; version: number }>(
+      `/notifications/customers/${customerId}`, { method: "PATCH", body: JSON.stringify({ opt_in: optIn }) },
+    ),
+  changeSource: (sourceId: string, available: boolean) =>
+    request<{ source_id: string; available: boolean }>(
+      `/notifications/sources/${sourceId}`, { method: "PATCH", body: JSON.stringify({ available }) },
     ),
 };

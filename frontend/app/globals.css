@@ -233,6 +233,26 @@ code { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92
 .status-select.amber { color:var(--amber); border-color:#f1d18c; }
 .status-select.blue { color:#3976ca; border-color:#c9dbf5; }
 
+/* --- Bài 03 --- */
+.policy-chips, .consent-list { display:flex; flex-wrap:wrap; gap:6px; }
+.policy-chips span { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:700; color:#5e5a66; background:#f3f2f6; border-radius:7px; padding:4px 8px; }
+.slot-grid th, .slot-grid td { text-align:center; white-space:nowrap; }
+.slot-grid th:first-child, .slot-grid td:first-child { text-align:left; font-weight:700; }
+.slot-grid th small { display:block; font-weight:600; text-transform:none; letter-spacing:0; }
+.slot-chip { display:inline-block; min-width:30px; padding:3px 6px; border-radius:6px; font-size:11.5px; font-weight:800; }
+.slot-chip.idle { background:#f3f2f6; color:#8b8693; font-weight:600; font-style:italic; }
+.slot-chip.unused { color:#b9b5c0; font-weight:600; }
+.slot-dot { display:inline-block; width:10px; height:10px; border-radius:50%; }
+.c0 { background:#efeaff; color:#5b3fe0; } .slot-dot.c0 { background:#6c4ff8; }
+.c1 { background:#e9f1ff; color:#3976ca; } .slot-dot.c1 { background:#3976ca; }
+.c2 { background:#e7f8ef; color:#1f7a4d; } .slot-dot.c2 { background:#249a61; }
+.c3 { background:var(--amber-bg); color:var(--amber); } .slot-dot.c3 { background:#d4952b; }
+.c4 { background:#ffe7ea; color:var(--red); } .slot-dot.c4 { background:#e0485c; }
+.c5 { background:#e6f6f8; color:#1d7f8c; } .slot-dot.c5 { background:#1d9aab; }
+.secondary-button.small { height:28px; padding:0 10px; font-size:11.5px; }
+.text-red { color:var(--red) !important; }
+.status-select.red { color:var(--red); border-color:#f3c3ca; }
+
 .spin { animation:spin .8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
