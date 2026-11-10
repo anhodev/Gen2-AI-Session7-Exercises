@@ -1,0 +1,86 @@
+{
+  "consent_sources": [
+    {"id": "crm", "name": "CRM chính", "available": true},
+    {"id": "crm-legacy", "name": "CRM cũ (đang bảo trì)", "available": false}
+  ],
+  "customers": [
+    {"id": "A", "name": "Khách A", "source_id": "crm", "opt_in": true},
+    {"id": "B", "name": "Khách B", "source_id": "crm", "opt_in": true},
+    {"id": "C", "name": "Khách C", "source_id": "crm", "opt_in": true},
+    {"id": "D", "name": "Khách D", "source_id": "crm", "opt_in": false},
+    {"id": "R", "name": "Khách R", "source_id": "crm", "opt_in": null},
+    {"id": "F", "name": "Khách F", "source_id": "crm", "opt_in": true},
+    {"id": "G", "name": "Khách G", "source_id": "crm", "opt_in": true},
+    {"id": "H", "name": "Khách H", "source_id": "crm", "opt_in": true},
+    {"id": "K", "name": "Khách K", "source_id": "crm", "opt_in": true},
+    {"id": "L", "name": "Khách L", "source_id": "crm", "opt_in": true},
+    {"id": "M", "name": "Khách M", "source_id": "crm", "opt_in": true},
+    {"id": "N", "name": "Khách N", "source_id": "crm", "opt_in": true},
+    {"id": "P", "name": "Khách P", "source_id": "crm", "opt_in": true},
+    {"id": "Q", "name": "Khách Q", "source_id": "crm-legacy", "opt_in": true}
+  ],
+  "campaigns": [
+    {"id": "CP-1", "name": "Ưu đãi cuối tháng - dữ liệu đề bài", "send_date": "2026-11-10", "first_slot": "09:00", "slot_minutes": 60, "slot_count": 8, "max_per_slot": 1, "gap": 2},
+    {"id": "CP-2", "name": "Nhắc gia hạn gói cước", "send_date": "2026-11-10", "first_slot": "09:00", "slot_minutes": 60, "slot_count": 6, "max_per_slot": 1, "gap": 2},
+    {"id": "CP-3", "name": "Chăm sóc một khách VIP", "send_date": "2026-11-10", "first_slot": "09:00", "slot_minutes": 60, "slot_count": 8, "max_per_slot": 1, "gap": 2},
+    {"id": "CP-4", "name": "Thông báo bảo trì - không cần giãn cách", "send_date": "2026-11-10", "first_slot": "13:00", "slot_minutes": 30, "slot_count": 4, "max_per_slot": 1, "gap": 0},
+    {"id": "CP-5", "name": "Khảo sát sau mua", "send_date": "2026-11-10", "first_slot": "09:00", "slot_minutes": 60, "slot_count": 6, "max_per_slot": 1, "gap": 2},
+    {"id": "CP-6", "name": "Flash sale buổi sáng", "send_date": "2026-11-10", "first_slot": "08:00", "slot_minutes": 60, "slot_count": 6, "max_per_slot": 1, "gap": 2},
+    {"id": "CP-7", "name": "Tri ân khách cũ", "send_date": "2026-11-10", "first_slot": "09:00", "slot_minutes": 60, "slot_count": 4, "max_per_slot": 1, "gap": 1},
+    {"id": "CP-8", "name": "Mời dùng thử", "send_date": "2026-11-10", "first_slot": "09:00", "slot_minutes": 60, "slot_count": 4, "max_per_slot": 1, "gap": 2}
+  ],
+  "messages": [
+    {"id": "A1", "campaign_id": "CP-1", "customer_id": "A", "title": "Giảm 20% đơn đầu tiên trong tuần"},
+    {"id": "A2", "campaign_id": "CP-1", "customer_id": "A", "title": "Miễn phí giao hàng hôm nay"},
+    {"id": "A3", "campaign_id": "CP-1", "customer_id": "A", "title": "Quà tặng khi mua từ 500.000 VND"},
+    {"id": "B1", "campaign_id": "CP-1", "customer_id": "B", "title": "Giảm 20% đơn đầu tiên trong tuần"},
+    {"id": "B2", "campaign_id": "CP-1", "customer_id": "B", "title": "Miễn phí giao hàng hôm nay"},
+    {"id": "B3", "campaign_id": "CP-1", "customer_id": "B", "title": "Quà tặng khi mua từ 500.000 VND"},
+
+    {"id": "C1", "campaign_id": "CP-2", "customer_id": "C", "title": "Gói cước sắp hết hạn"},
+    {"id": "C2", "campaign_id": "CP-2", "customer_id": "C", "title": "Gia hạn hôm nay được tặng 1 tháng"},
+    {"id": "D1", "campaign_id": "CP-2", "customer_id": "D", "title": "Gói cước sắp hết hạn"},
+    {"id": "D2", "campaign_id": "CP-2", "customer_id": "D", "title": "Gia hạn hôm nay được tặng 1 tháng"},
+    {"id": "R1", "campaign_id": "CP-2", "customer_id": "R", "title": "Gói cước sắp hết hạn"},
+
+    {"id": "F1", "campaign_id": "CP-3", "customer_id": "F", "title": "Lời chào từ quản lý tài khoản"},
+    {"id": "F2", "campaign_id": "CP-3", "customer_id": "F", "title": "Lịch hẹn tư vấn tuần sau"},
+    {"id": "F3", "campaign_id": "CP-3", "customer_id": "F", "title": "Ưu đãi riêng cho khách VIP"},
+
+    {"id": "G1", "campaign_id": "CP-4", "customer_id": "G", "title": "Hệ thống bảo trì từ 22:00"},
+    {"id": "G2", "campaign_id": "CP-4", "customer_id": "G", "title": "Hướng dẫn lưu dữ liệu trước bảo trì"},
+    {"id": "H1", "campaign_id": "CP-4", "customer_id": "H", "title": "Hệ thống bảo trì từ 22:00"},
+
+    {"id": "K1", "campaign_id": "CP-5", "customer_id": "K", "title": "Bạn thấy đơn hàng thế nào?"},
+    {"id": "K2", "campaign_id": "CP-5", "customer_id": "K", "title": "Nhận voucher khi trả lời khảo sát"},
+    {"id": "L1", "campaign_id": "CP-5", "customer_id": "L", "title": "Bạn thấy đơn hàng thế nào?"},
+    {"id": "L2", "campaign_id": "CP-5", "customer_id": "L", "title": "Nhận voucher khi trả lời khảo sát"},
+    {"id": "M1", "campaign_id": "CP-5", "customer_id": "M", "title": "Bạn thấy đơn hàng thế nào?"},
+    {"id": "M2", "campaign_id": "CP-5", "customer_id": "M", "title": "Nhận voucher khi trả lời khảo sát"},
+
+    {"id": "N1", "campaign_id": "CP-6", "customer_id": "N", "title": "Flash sale mở lúc 8 giờ"},
+    {"id": "N2", "campaign_id": "CP-6", "customer_id": "N", "title": "Còn 50% số lượng"},
+    {"id": "N3", "campaign_id": "CP-6", "customer_id": "N", "title": "Còn 10% số lượng"},
+    {"id": "N4", "campaign_id": "CP-6", "customer_id": "N", "title": "Flash sale sắp kết thúc"},
+    {"id": "P1", "campaign_id": "CP-6", "customer_id": "P", "title": "Flash sale mở lúc 8 giờ"},
+
+    {"id": "Q1", "campaign_id": "CP-7", "customer_id": "Q", "title": "Cảm ơn bạn đã đồng hành 5 năm"},
+    {"id": "Q2", "campaign_id": "CP-7", "customer_id": "Q", "title": "Quà tri ân dành cho bạn"},
+    {"id": "B4", "campaign_id": "CP-7", "customer_id": "B", "title": "Cảm ơn bạn đã đồng hành 5 năm"},
+
+    {"id": "D3", "campaign_id": "CP-8", "customer_id": "D", "title": "Dùng thử miễn phí 7 ngày"}
+  ],
+  "questions": [
+    {"label": "Đề bài: CP-1", "question": "Chiến dịch CP-1 hôm nay nên xếp các tin vào khung giờ nào?"},
+    {"label": "Gửi ngay", "question": "Gửi ngay các tin của chiến dịch CP-1 giúp tôi"},
+    {"label": "Thiếu mã chiến dịch", "question": "Hôm nay nên gửi thông báo lúc nào?"},
+    {"label": "Khách từ chối nhận tin", "question": "Xếp lịch gửi cho chiến dịch CP-2"},
+    {"label": "Chỉ một khách", "question": "Chiến dịch CP-3 gửi vào giờ nào?"},
+    {"label": "gap = 0", "question": "Lên lịch gửi CP-4"},
+    {"label": "Nhiều khách cùng số tin", "question": "Xếp lịch CP-5 giúp tôi"},
+    {"label": "Hết giờ còn tin", "question": "Chiến dịch CP-6 hôm nay gửi kịp hết không?"},
+    {"label": "Công cụ đọc dữ liệu lỗi", "question": "Xếp lịch gửi chiến dịch CP-7"},
+    {"label": "Không còn ai nhận", "question": "Xếp lịch CP-8"},
+    {"label": "Chiến dịch không tồn tại", "question": "Xếp lịch gửi CP-99"}
+  ]
+}
