@@ -1,0 +1,57 @@
+{
+  "lines": [
+    {"id": "L-1", "name": "Dây chuyền đóng gói 1 (dữ liệu đề bài)"},
+    {"id": "L-2", "name": "Dây chuyền đóng gói 2 (đã làm xong hết lô)"},
+    {"id": "L-3", "name": "Dây chuyền chiết rót 3 (có lô 0 sản phẩm, vừa đúng hạn ca)"},
+    {"id": "L-4", "name": "Dây chuyền dán nhãn 4 (không máy nào đủ nhanh)"},
+    {"id": "L-5", "name": "Dây chuyền in 5 (ít giờ hơn số lô)"}
+  ],
+  "shifts": [
+    {"id": "CA-1", "line_id": "L-1", "name": "Ca chiều 13:00-21:00", "hours_left": 8},
+    {"id": "CA-2", "line_id": "L-1", "name": "Ca sáng 05:00-13:00 (đã hết giờ)", "hours_left": 0},
+    {"id": "CA-3", "line_id": "L-2", "name": "Ca chiều 13:00-21:00", "hours_left": 6},
+    {"id": "CA-4", "line_id": "L-3", "name": "Ca tối 17:00-21:00", "hours_left": 4},
+    {"id": "CA-5", "line_id": "L-4", "name": "Ca tối 18:00-21:00", "hours_left": 3},
+    {"id": "CA-6", "line_id": "L-5", "name": "Ca tối 19:00-21:00", "hours_left": 2}
+  ],
+  "batches": [
+    {"id": "B-100", "line_id": "L-1", "product": "Hộp bánh quy", "quantity": 50, "status": "done"},
+    {"id": "B-101", "line_id": "L-1", "product": "Hộp trà xanh", "quantity": 30},
+    {"id": "B-102", "line_id": "L-1", "product": "Hộp cà phê", "quantity": 11},
+    {"id": "B-103", "line_id": "L-1", "product": "Hộp kẹo", "quantity": 23},
+    {"id": "B-104", "line_id": "L-1", "product": "Hộp quà Tết", "quantity": 4},
+    {"id": "B-200", "line_id": "L-2", "product": "Thùng sữa", "quantity": 40, "status": "done"},
+    {"id": "B-301", "line_id": "L-3", "product": "Chai nước mắm (lô đã hủy hết)", "quantity": 0},
+    {"id": "B-302", "line_id": "L-3", "product": "Chai nước tương", "quantity": 20},
+    {"id": "B-303", "line_id": "L-3", "product": "Chai dầu ăn", "quantity": 20},
+    {"id": "B-401", "line_id": "L-4", "product": "Nhãn chai 1L", "quantity": 100},
+    {"id": "B-402", "line_id": "L-4", "product": "Nhãn chai 500ml", "quantity": 80},
+    {"id": "B-501", "line_id": "L-5", "product": "Tờ rơi A4", "quantity": 5},
+    {"id": "B-502", "line_id": "L-5", "product": "Tờ rơi A5", "quantity": 5},
+    {"id": "B-503", "line_id": "L-5", "product": "Danh thiếp", "quantity": 5}
+  ],
+  "machines": [
+    {"id": "M1", "line_id": "L-1", "name": "Máy đóng gói M1", "rate_per_hour": 8},
+    {"id": "M2", "line_id": "L-1", "name": "Máy đóng gói M2", "rate_per_hour": 12},
+    {"id": "M3", "line_id": "L-1", "name": "Máy đóng gói M3", "rate_per_hour": 16},
+    {"id": "M4", "line_id": "L-1", "name": "Máy đóng gói M4", "rate_per_hour": 20, "status": "maintenance"},
+    {"id": "M5", "line_id": "L-2", "name": "Máy đóng gói M5", "rate_per_hour": 10},
+    {"id": "M6", "line_id": "L-3", "name": "Máy chiết rót M6", "rate_per_hour": 10},
+    {"id": "M7", "line_id": "L-3", "name": "Máy chiết rót M7", "rate_per_hour": 15},
+    {"id": "M8", "line_id": "L-4", "name": "Máy dán nhãn M8", "rate_per_hour": 40},
+    {"id": "M9", "line_id": "L-4", "name": "Máy dán nhãn M9", "rate_per_hour": 60},
+    {"id": "M10", "line_id": "L-5", "name": "Máy in M10", "rate_per_hour": 100}
+  ],
+  "questions": [
+    {"label": "Đề bài: L-1 ca CA-1", "question": "Dây chuyền L-1, ca CA-1: máy nào xử lý xong các lô còn lại trước khi hết ca?"},
+    {"label": "Đặt máy", "question": "Dây chuyền L-1 ca CA-1 cần máy nào? Đặt máy luôn giúp tôi"},
+    {"label": "Thiếu mã ca", "question": "Dây chuyền L-1 cần máy nhanh cỡ nào?"},
+    {"label": "Không còn lô", "question": "Dây chuyền L-2 ca CA-3 cần máy nhanh cỡ nào?"},
+    {"label": "Lô 0 sản phẩm, vừa đúng hạn", "question": "Dây chuyền L-3 ca CA-4 cần tốc độ tối thiểu bao nhiêu?"},
+    {"label": "Không máy nào đủ nhanh", "question": "Dây chuyền L-4 ca CA-5 dùng máy nào cho kịp?"},
+    {"label": "Ít giờ hơn số lô", "question": "Dây chuyền L-5 ca CA-6 có kịp không?"},
+    {"label": "Ca đã hết giờ", "question": "Dây chuyền L-1 ca CA-2 cần máy nào?"},
+    {"label": "Ca của dây chuyền khác", "question": "Dây chuyền L-1 ca CA-3 cần máy nào?"},
+    {"label": "Dây chuyền không tồn tại", "question": "Dây chuyền L-9 ca CA-1 cần máy nào?"}
+  ]
+}
