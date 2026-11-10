@@ -50,6 +50,7 @@ def create_tables(engine: Engine) -> None:
     from app.modules.invoices import entities as invoice_entities  # noqa: F401
     from app.modules.capacity import entities as capacity_entities  # noqa: F401
     from app.modules.notifications import entities as notification_entities  # noqa: F401
+    from app.modules.incidents import entities as incident_entities  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 

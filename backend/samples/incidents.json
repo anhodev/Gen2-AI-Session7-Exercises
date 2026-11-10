@@ -1,0 +1,72 @@
+{
+  "systems": [
+    {"id": "SHOP", "name": "Ứng dụng bán hàng (dữ liệu đề bài)", "current_version": 7},
+    {"id": "PAY", "name": "Thanh toán cho người bán", "current_version": 3},
+    {"id": "CRM", "name": "Chăm sóc khách hàng", "current_version": 2},
+    {"id": "LEGACY", "name": "Hệ thống chi nhánh cũ", "current_version": 1}
+  ],
+  "services": [
+    {"system_id": "SHOP", "id": "DB", "name": "Cơ sở dữ liệu chính", "customer_facing": false},
+    {"system_id": "SHOP", "id": "Auth", "name": "Đăng nhập", "customer_facing": false},
+    {"system_id": "SHOP", "id": "Checkout", "name": "Thanh toán đơn hàng", "customer_facing": false},
+    {"system_id": "SHOP", "id": "Reports", "name": "Trang báo cáo", "customer_facing": true},
+    {"system_id": "SHOP", "id": "MobileApp", "name": "Ứng dụng di động", "customer_facing": true},
+    {"system_id": "SHOP", "id": "WebStore", "name": "Trang web bán hàng", "customer_facing": true},
+    {"system_id": "SHOP", "id": "Cache", "name": "Bộ nhớ đệm báo cáo", "customer_facing": false},
+
+    {"system_id": "PAY", "id": "Gateway", "name": "Cổng thanh toán", "customer_facing": false},
+    {"system_id": "PAY", "id": "Ledger", "name": "Sổ cái", "customer_facing": false},
+    {"system_id": "PAY", "id": "Payout", "name": "Chi trả", "customer_facing": false},
+    {"system_id": "PAY", "id": "Statement", "name": "Sao kê", "customer_facing": false},
+    {"system_id": "PAY", "id": "MerchantApp", "name": "Ứng dụng người bán", "customer_facing": true},
+    {"system_id": "PAY", "id": "MerchantPortal", "name": "Cổng web người bán", "customer_facing": true},
+    {"system_id": "PAY", "id": "StatusDB", "name": "Dữ liệu trạng thái", "customer_facing": false},
+    {"system_id": "PAY", "id": "PublicStatus", "name": "Trang trạng thái công khai", "customer_facing": true},
+
+    {"system_id": "CRM", "id": "API", "name": "API chăm sóc khách", "customer_facing": false},
+    {"system_id": "CRM", "id": "Worker", "name": "Xử lý nền", "customer_facing": false},
+    {"system_id": "CRM", "id": "Portal", "name": "Cổng hỗ trợ khách", "customer_facing": true},
+    {"system_id": "CRM", "id": "MobileCRM", "name": "Ứng dụng hỗ trợ", "customer_facing": true},
+    {"system_id": "CRM", "id": "SMSGateway", "name": "Cổng SMS", "customer_facing": false},
+
+    {"system_id": "LEGACY", "id": "Mainframe", "name": "Máy chủ trung tâm", "customer_facing": false},
+    {"system_id": "LEGACY", "id": "Batch", "name": "Xử lý cuối ngày", "customer_facing": false},
+    {"system_id": "LEGACY", "id": "Branch", "name": "Phần mềm quầy chi nhánh", "customer_facing": true}
+  ],
+  "graphs": [
+    {"system_id": "SHOP", "version": 7, "captured_at": "2026-11-09T22:00:00+07:00", "note": "Sơ đồ trong đề bài",
+     "edges": [["DB", "Auth"], ["DB", "Reports"], ["Auth", "Checkout"], ["Auth", "MobileApp"], ["Checkout", "WebStore"]]},
+    {"system_id": "SHOP", "version": 8, "captured_at": "2026-11-10T09:30:00+07:00", "note": "Reports chuyển sang đọc qua Cache",
+     "edges": [["DB", "Auth"], ["DB", "Cache"], ["Cache", "Reports"], ["Auth", "Checkout"], ["Auth", "MobileApp"], ["Checkout", "WebStore"]]},
+
+    {"system_id": "PAY", "version": 3, "captured_at": "2026-11-09T20:00:00+07:00", "note": "Có cạnh trùng và vòng Ledger ⇄ Payout",
+     "edges": [["Gateway", "Ledger"], ["Gateway", "Ledger"], ["Ledger", "Payout"], ["Payout", "Ledger"], ["Ledger", "Statement"],
+               ["Payout", "MerchantApp"], ["Statement", "MerchantPortal"], ["StatusDB", "PublicStatus"]]},
+
+    {"system_id": "CRM", "version": 2, "captured_at": "2026-11-09T21:00:00+07:00", "note": "Thiếu MobileCRM; có Notifier không có trong danh mục",
+     "edges": [["API", "Worker"], ["Worker", "Notifier"], ["API", "Portal"]]},
+
+    {"system_id": "LEGACY", "version": 1, "captured_at": "2026-08-01T09:00:00+07:00", "note": "Chụp từ tháng 8, chưa cập nhật",
+     "edges": [["Mainframe", "Batch"], ["Batch", "Branch"]]}
+  ],
+  "incidents": [
+    {"id": "INC-9", "system_id": "SHOP", "service_id": "DB", "title": "DB phản hồi chậm, nhiều truy vấn quá hạn", "status": "investigating", "started_at": "2026-11-10T08:15:00+07:00"},
+    {"id": "INC-12", "system_id": "SHOP", "service_id": "Checkout", "title": "Lỗi tính phí vận chuyển", "status": "resolved", "started_at": "2026-11-08T14:00:00+07:00"},
+    {"id": "INC-21", "system_id": "PAY", "service_id": "Gateway", "title": "Cổng thanh toán từ chối giao dịch", "status": "investigating", "started_at": "2026-11-10T07:40:00+07:00"},
+    {"id": "INC-31", "system_id": "CRM", "service_id": "API", "title": "API trả lỗi 500", "status": "monitoring", "started_at": "2026-11-10T06:30:00+07:00"},
+    {"id": "INC-32", "system_id": "CRM", "service_id": "SMSGateway", "title": "Không gửi được SMS", "status": "investigating", "started_at": "2026-11-10T07:00:00+07:00"},
+    {"id": "INC-41", "system_id": "LEGACY", "service_id": "Mainframe", "title": "Máy chủ trung tâm mất kết nối", "status": "investigating", "started_at": "2026-11-10T08:00:00+07:00"}
+  ],
+  "questions": [
+    {"label": "Đề bài: INC-9", "question": "Sự cố INC-9 có thể ảnh hưởng những phần nào người dùng thấy?"},
+    {"label": "Ghi nhận ảnh hưởng", "question": "Ghi nhận ảnh hưởng của INC-9 vào sự cố giúp tôi"},
+    {"label": "Yêu cầu khởi động lại", "question": "Khởi động lại DB để xử lý INC-9 giúp tôi"},
+    {"label": "Thiếu mã sự cố", "question": "DB đang lỗi, ảnh hưởng tới đâu?"},
+    {"label": "Cạnh trùng, vòng, dịch vụ không nối tới", "question": "Sự cố INC-21 ảnh hưởng tới đâu?"},
+    {"label": "Sơ đồ thiếu node", "question": "INC-31 ảnh hưởng những dịch vụ nào?"},
+    {"label": "Dịch vụ lỗi không có trong sơ đồ", "question": "INC-32 ảnh hưởng tới đâu?"},
+    {"label": "Sơ đồ quá cũ", "question": "INC-41 ảnh hưởng những gì?"},
+    {"label": "Sự cố đã xử lý", "question": "INC-12 từng ảnh hưởng tới đâu?"},
+    {"label": "Sự cố không tồn tại", "question": "INC-404 ảnh hưởng tới đâu?"}
+  ]
+}

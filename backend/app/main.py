@@ -17,6 +17,8 @@ from app.core.database import create_tables, make_session_factory
 from app.core.router import router as core_router
 from app.modules.capacity.agent import SPEC as CAPACITY
 from app.modules.capacity.router import router as capacity_router
+from app.modules.incidents.agent import SPEC as INCIDENTS
+from app.modules.incidents.router import router as incidents_router
 from app.modules.invoices.agent import SPEC as INVOICES
 from app.modules.invoices.router import router as invoices_router
 from app.modules.notifications.agent import SPEC as NOTIFICATIONS
@@ -41,7 +43,7 @@ async def lifespan(app: FastAPI):
 
 
 # Các bài đã làm. Mỗi bài khai báo một AgentSpec trong modules/<bài>/agent.py
-AGENTS: list[AgentSpec] = [INVOICES, CAPACITY, NOTIFICATIONS]
+AGENTS: list[AgentSpec] = [INVOICES, CAPACITY, NOTIFICATIONS, INCIDENTS]
 
 
 def create_app(settings: Settings | None = None, agents: list[AgentSpec] | None = None) -> FastAPI:
@@ -80,6 +82,7 @@ def create_app(settings: Settings | None = None, agents: list[AgentSpec] | None 
     app.include_router(invoices_router)
     app.include_router(capacity_router)
     app.include_router(notifications_router)
+    app.include_router(incidents_router)
     return app
 
 
