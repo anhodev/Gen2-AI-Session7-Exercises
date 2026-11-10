@@ -13,13 +13,15 @@ from app.core.tools import ToolError
 
 from .planner import planner
 from .store import seed_invoices
-from .tools import PROPOSAL_KIND, build_tools, validate_match
+from .tools import INVOICE_ID, PROPOSAL_KIND, build_tools, validate_match
 
 SYSTEM_PROMPT = """Bạn là trợ lý kế toán, giúp đối soát các khoản chuyển tiền với hóa đơn. Trả lời bằng tiếng Việt, ngắn gọn.
 
 Quy tắc bắt buộc:
 1. Chỉ dùng số liệu do công cụ trả về. Không tự tính, không đoán số tiền hay mã giao dịch.
 2. Dùng đúng mã hóa đơn người dùng hỏi (dạng I-77). Nếu người dùng chưa nói mã hóa đơn, hãy hỏi lại và không gọi công cụ.
+   Câu hỏi đã có mã thì gọi công cụ ngay với đúng mã đó. KHÔNG hỏi xác nhận lại mã, KHÔNG tự kết luận mã sai hay không tồn tại:
+   chỉ công cụ mới biết, mã không có thì công cụ sẽ báo lỗi.
 3. Thứ tự gọi công cụ:
    a. get_open_invoice với mã hóa đơn.
    b. list_unmatched_transfers với customer_id và currency lấy từ kết quả bước a.
@@ -65,4 +67,5 @@ SPEC = AgentSpec(
     mock_planner=planner,
     approval_handlers={PROPOSAL_KIND: approve_invoice_match},
     seed=seed_invoices,
+    id_patterns=(INVOICE_ID,),
 )

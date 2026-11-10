@@ -13,6 +13,7 @@ Model chỉ được chọn công cụ và tham số. Backend quyết định c�
 from __future__ import annotations
 
 import json
+import re
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Sequence
@@ -43,6 +44,16 @@ class AgentSpec:
     approval_handlers: dict[str, ApprovalHandler] = field(default_factory=dict)
     # Nạp dữ liệu mẫu của bài nếu database còn trống, chạy lúc app khởi động
     seed: Callable[[Session], None] | None = None
+    # Regex mã mà câu hỏi phải có để tra cứu (vd mã hóa đơn). Câu hỏi có đủ các mã này thì vòng đầu
+    # bắt model gọi công cụ: model nhỏ hay hỏi lại "xác nhận mã" dù người dùng đã nói rõ.
+    id_patterns: tuple[str, ...] = ()
+
+
+def mentions_ids(text: str, patterns: Sequence[str]) -> bool:
+    """Câu hỏi có đủ mỗi loại mã trong patterns (vd "L-1" và "CA-1") hay không."""
+    if not patterns:
+        return False
+    return all(re.search(rf"(?<![\w-]){p.strip('^$')}(?![\w-])", text) for p in patterns)
 
 
 @dataclass
@@ -100,6 +111,7 @@ def run_agent(
     history: Sequence[BaseMessage] = (),
     max_rounds: int = 6,
     on_tool_done: Callable[[ToolCallRecord], None] | None = None,
+    require_tool_first: bool = False,
 ) -> AgentOutcome:
     """
     Cho model gọi công cụ cho tới khi có câu trả lời, tối đa max_rounds vòng.
@@ -113,18 +125,21 @@ def run_agent(
         max_rounds (int, optional): Số lần gọi model tối đa. Defaults to 6.
         on_tool_done (Callable | None, optional): Gọi sau mỗi lần chạy công cụ. Test dùng để
             đổi dữ liệu giữa hai lần gọi. Defaults to None.
+        require_tool_first (bool, optional): Vòng đầu bắt model gọi ít nhất một công cụ
+            (tool_choice="required"), model vẫn tự chọn công cụ nào. Defaults to False.
 
     Returns:
         AgentOutcome: Trạng thái, câu trả lời, các lần gọi công cụ.
     """
     tools_by_name = {t.name: t for t in tools}
     bound = model.bind_tools(tools)
+    first = model.bind_tools(tools, tool_choice="required") if require_tool_first else bound
     messages: list[BaseMessage] = [SystemMessage(content=system_prompt), *history, HumanMessage(content=question)]
     calls: list[ToolCallRecord] = []
 
     for round_no in range(1, max_rounds + 1):
         try:
-            reply = bound.invoke(messages)
+            reply = (first if round_no == 1 else bound).invoke(messages)
         except Exception as exc:  # mất mạng, sai key, hết quota...
             error = f"Gọi model thất bại ({type(exc).__name__}): {exc}"
             return AgentOutcome("error", None, error, round_no, calls, messages)

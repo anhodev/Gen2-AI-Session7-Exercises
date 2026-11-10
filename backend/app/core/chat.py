@@ -12,7 +12,7 @@ from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .agent import AgentSpec, ToolCallRecord, make_model, run_agent
+from .agent import AgentSpec, ToolCallRecord, make_model, mentions_ids, run_agent
 from .config import Settings
 from .entities import ChatRun, ToolCallLog, now_utc
 from .tools import ToolContext
@@ -93,6 +93,7 @@ def ask(
         history=history,
         max_rounds=settings.max_tool_rounds,
         on_tool_done=after_tool,
+        require_tool_first=mentions_ids(question, spec.id_patterns),
     )
 
     # Bỏ thay đổi dở dang (nếu có) trước khi lưu lịch sử

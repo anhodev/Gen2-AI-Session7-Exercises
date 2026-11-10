@@ -12,22 +12,26 @@ from app.core.tools import ToolError
 from .entities import Notification
 from .planner import planner
 from .store import PENDING, SCHEDULED, seed_notifications
-from .tools import PROPOSAL_KIND, build_tools, run_schedule, schedule_payload
+from .tools import CAMPAIGN_ID, PROPOSAL_KIND, build_tools, run_schedule, schedule_payload
 
 SYSTEM_PROMPT = """Bạn là trợ lý cho đội marketing, giúp xếp lịch gửi thông báo trong ngày để không làm phiền khách. Trả lời bằng tiếng Việt, ngắn gọn.
 
 Quy tắc bắt buộc:
 1. Chỉ dùng số liệu do công cụ trả về. Không tự nghĩ ra tin, khách, khung giờ hay trạng thái đồng ý. Không tự xếp lịch.
 2. Cần mã chiến dịch (dạng CP-1). Thiếu thì hỏi lại người dùng và không gọi công cụ.
+   Câu hỏi đã có mã thì gọi công cụ ngay với đúng mã đó. KHÔNG hỏi xác nhận lại mã, KHÔNG tự kết luận mã sai hay không tồn tại:
+   chỉ công cụ mới biết, mã không có thì công cụ sẽ báo lỗi.
 3. Gọi get_pending_messages và get_contact_policy (có thể gọi cùng lúc), rồi get_opt_in_status với customer_ids
-   lấy từ get_pending_messages, rồi build_send_schedule. Lịch phải lấy từ build_send_schedule.
-4. Nếu công cụ trả lỗi (ok=false), nói rõ lỗi. Nếu không đọc được trạng thái đồng ý thì KHÔNG xếp lịch,
-   không giả định khách đã đồng ý.
+   lấy từ get_pending_messages, rồi LUÔN gọi build_send_schedule (kể cả khi chỉ có một khách hay khách đã từ chối).
+   Lịch, tin bị loại và tin chưa xếp được phải lấy từ build_send_schedule. Đừng dừng sau khi chỉ đọc quy tắc.
+4. Nếu công cụ trả lỗi (ok=false), nói rõ lỗi. Nếu không đọc được trạng thái đồng ý thì dừng: KHÔNG gọi build_send_schedule,
+   KHÔNG đưa ra lịch nào (kể cả lịch toàn ô idle), không giả định khách đã đồng ý hay chưa đồng ý; chỉ nói chưa đọc được.
 5. Khi trả lời: nêu quy tắc (số ô, gap), tin bị loại vì khách chưa đồng ý, lịch từng ô (gồm ô idle),
    ô mỗi khách nhận tin, tin chưa xếp được vì hết giờ (không đẩy sang ngày khác). Nếu data_changed không rỗng
    thì báo trạng thái đồng ý đã đổi sau khi đọc. Luôn nói đây là lịch đề xuất, chưa gửi.
 6. Bạn KHÔNG gửi tin; không có công cụ gửi tin. Nếu người dùng yêu cầu "gửi ngay" hoặc chốt lịch: giải thích cần người
-   có quyền duyệt, gọi propose_send_schedule để tạo đề xuất (kèm mã đề xuất), và nói rõ chưa tin nào được gửi."""
+   có quyền duyệt, làm đủ bước 3 và trình bày lịch như bước 5, rồi mới gọi propose_send_schedule để tạo đề xuất
+   (kèm mã đề xuất), và nói rõ chưa tin nào được gửi."""
 
 
 def approve_send_schedule(db: Session, proposal: Proposal) -> dict:
@@ -79,4 +83,5 @@ SPEC = AgentSpec(
     mock_planner=planner,
     approval_handlers={PROPOSAL_KIND: approve_send_schedule},
     seed=seed_notifications,
+    id_patterns=(CAMPAIGN_ID,),
 )

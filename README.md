@@ -79,6 +79,7 @@ câu trả lời cuối ── lưu lại, hiện trên chat và trang Lịch s�
 | Yêu cầu của đề | Cách làm |
 |---|---|
 | `@tool` + `bind_tools`, trả `ToolMessage` đúng `tool_call_id`, lặp có giới hạn | [app/core/agent.py](backend/app/core/agent.py). Quá số vòng thì dừng với trạng thái `max_steps` |
+| Câu hỏi có mã thì phải tra dữ liệu thật | Câu hỏi có đủ mã của bài (vd `I-77`, `L-1` + `CA-1`) thì vòng đầu gọi model với `tool_choice="required"`: model phải gọi công cụ, không được hỏi lại hay tự kết luận mã sai. Thiếu mã thì model được hỏi lại |
 | Kiểm tra tên công cụ và tham số | Tên lạ → lỗi `tool_not_allowed`. Tham số sai kiểu, thừa ô, sai định dạng mã → `invalid_args`. Công cụ không được chạy |
 | Không lấy số liệu do model điền | Công cụ thuật toán chỉ nhận mã (`invoice_id`, `line_id`, `campaign_id`, `incident_id`) và tự đọc lại database |
 | Không SQL tùy ý, URL tùy ý | Mã đi qua regex chặt (vd `^INC-\d{1,10}$`). Không có công cụ nhận câu lệnh hay đường dẫn |
@@ -180,6 +181,18 @@ myenv/bin/python scripts/run_samples.py
 
 Script khôi phục dữ liệu mẫu trước mỗi bài, không duyệt đề xuất nào. Mọi lần chạy đều xem lại được ở trang Lịch sử xử lý.
 
+Kết quả chạy với `gpt-4o-mini` (40 câu hỏi mẫu, ngày 10/11/2026):
+
+- Cả 40 câu trả lời xong, không câu nào dừng vì `max_steps` hay lỗi. 4 câu đề bài ra đúng kết quả như bảng ở đầu trang.
+- Câu thiếu mã: model hỏi lại, không gọi công cụ. Mã không tồn tại, hóa đơn đã thanh toán, ca của dây chuyền khác,
+  nguồn đồng ý không phản hồi: model gọi công cụ, nhận mã lỗi và nói đúng lý do.
+- Lần chạy đầu, `gpt-4o-mini` hay hỏi "vui lòng xác nhận mã I-99" dù câu hỏi đã có mã, và đoán `system_id` khi gọi
+  song song với `get_incident`. Đã sửa bằng `tool_choice="required"` ở vòng đầu (xem bảng an toàn) và quy tắc thứ tự
+  gọi trong prompt.
+- Còn lệch: "Chiến dịch CP-3 gửi vào giờ nào?" đôi khi chỉ được trả lời bằng khung giờ của quy tắc liên hệ, không xếp
+  lịch. "Gửi ngay" và "Ghi nhận ảnh hưởng" có lúc gọi `propose_*` trước khi đọc dữ liệu; vẫn an toàn vì công cụ đề xuất
+  tự tính lại từ database và chỉ tạo bản ghi chờ duyệt.
+
 ### Dùng Supabase PostgreSQL
 
 Điền các biến `DB_*` trong `backend/.env` (lấy ở Supabase: Project Settings > Database > Connection parameters).
@@ -192,14 +205,14 @@ cd backend
 myenv/bin/python -m pytest -q
 ```
 
-708 test, không gọi model thật, mỗi test dùng SQLite tạm:
+716 test, không gọi model thật, mỗi test dùng SQLite tạm:
 
 | Nhóm | Số test | Kiểm tra gì |
 |---|---|---|
 | `test_*_algo.py` | 441 | Thuật toán từng bài: ca đề bài, ca biên, so với cách vét cạn / Bellman-Ford trên dữ liệu ngẫu nhiên, dữ liệu lớn |
 | `test_*_tools.py` | 114 | Công cụ: đọc đúng dữ liệu, chặn tham số lạ, đọc lại database, phát hiện dữ liệu đổi, đề xuất không ghi dữ liệu thật |
 | `test_*_api.py`, `test_chat_api.py` | 123 | Luồng chat qua API: thứ tự gọi công cụ, câu trả lời, duyệt / từ chối, xung đột 409, khôi phục dữ liệu |
-| `test_agent.py`, `test_config.py` | 30 | Vòng lặp tool calling: tên lạ, tham số sai, quá số vòng, model lỗi, đọc cấu hình |
+| `test_agent.py`, `test_config.py` | 38 | Vòng lặp tool calling: tên lạ, tham số sai, quá số vòng, model lỗi, bắt gọi công cụ khi câu hỏi có mã, đọc cấu hình |
 
 ## Cấu trúc thư mục
 

@@ -7,7 +7,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from app.core.agent import run_agent
+from app.core.agent import mentions_ids, run_agent
 from app.core.mock_model import MockChatModel, answer, ask_tools, call, scripted, tool_outputs
 from app.core.tools import ToolArgs, ToolError, kind_of, with_kind
 
@@ -219,3 +219,48 @@ def test_tool_outputs_only_reads_current_question():
         HumanMessage(content="câu mới"),
     ]
     assert tool_outputs(messages) == []
+
+
+# --- Bắt gọi công cụ ở vòng đầu ---------------------------------------------
+
+class ChoiceRecorder:
+    """Ghi lại tool_choice của model dùng ở mỗi vòng."""
+
+    def __init__(self, *replies: AIMessage):
+        self.plan = scripted(*replies)
+        self.choices: list = []
+
+    def bind_tools(self, tools, tool_choice=None):
+        recorder = self
+
+        class Bound:
+            def invoke(self, messages):
+                recorder.choices.append(tool_choice)
+                return recorder.plan(messages)
+
+        return Bound()
+
+
+def test_require_tool_first_only_applies_to_first_round():
+    model = ChoiceRecorder(ask_tools(call("get_invoice", invoice_id="I-77")), answer("xong"))
+    outcome = run_agent(model, TOOLS, "system", "Kiểm tra hóa đơn I-77", require_tool_first=True)
+    assert outcome.status == "answered"
+    assert model.choices == ["required", None]
+
+
+def test_tool_choice_is_free_by_default():
+    model = ChoiceRecorder(answer("Bạn cho mã hóa đơn nhé"))
+    run_agent(model, TOOLS, "system", "Kiểm tra hóa đơn giúp tôi")
+    assert model.choices == [None]
+
+
+@pytest.mark.parametrize("text, patterns, expected", [
+    ("Kiểm tra hóa đơn I-77", (r"^I-\d{1,10}$",), True),
+    ("Khách chuyển tiền hai lần", (r"^I-\d{1,10}$",), False),
+    ("Mã CI-77 không phải hóa đơn", (r"^I-\d{1,10}$",), False),
+    ("Dây chuyền L-1, ca CA-1?", (r"^L-\d{1,10}$", r"^CA-\d{1,10}$"), True),
+    ("Dây chuyền L-1 cần máy nào?", (r"^L-\d{1,10}$", r"^CA-\d{1,10}$"), False),
+    ("Kiểm tra I-77", (), False),
+])
+def test_mentions_ids(text, patterns, expected):
+    assert mentions_ids(text, patterns) is expected

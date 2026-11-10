@@ -67,7 +67,8 @@ tests/
 2. Viết công cụ trong `tools.py`: tham số kế thừa `ToolArgs`, mã có `pattern`; gắn loại bằng `with_kind(...)`.
    Công cụ thuật toán chỉ nhận mã và tự đọc lại database.
 3. Viết `planner.py` cho chế độ mock và `agent.py` với `AgentSpec(module, system_prompt, build_tools, mock_planner,
-   approval_handlers, seed)`.
+   approval_handlers, seed, id_patterns)`.
+   `id_patterns` là regex mã của bài: câu hỏi có đủ mã thì vòng đầu bắt model gọi công cụ.
 4. Thêm `AgentSpec` vào `AGENTS` trong `main.py`, gắn router phụ, và import `entities.py` của bài trong `create_tables` (`core/database.py`) để tạo bảng.
 
 ## Chạy câu hỏi mẫu

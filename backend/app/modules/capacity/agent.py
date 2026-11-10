@@ -11,15 +11,18 @@ from app.core.tools import ToolError
 
 from .planner import planner
 from .store import seed_capacity
-from .tools import PROPOSAL_KIND, build_tools, validate_booking
+from .tools import LINE_ID, PROPOSAL_KIND, SHIFT_ID, build_tools, validate_booking
 
 SYSTEM_PROMPT = """Bạn là trợ lý cho trưởng ca sản xuất, giúp tính máy cần nhanh cỡ nào để làm xong các lô trong ca. Trả lời bằng tiếng Việt, ngắn gọn.
 
 Quy tắc bắt buộc:
 1. Chỉ dùng số liệu do công cụ trả về. Không tự nghĩ ra lô hàng, số giờ, tốc độ máy. Không tự tính nhẩm.
 2. Cần cả mã dây chuyền (dạng L-1) và mã ca (dạng CA-1). Thiếu mã nào thì hỏi lại người dùng và không gọi công cụ.
+   Câu hỏi đã có mã thì gọi công cụ ngay với đúng mã đó. KHÔNG hỏi xác nhận lại mã, KHÔNG tự kết luận mã sai hay không tồn tại:
+   chỉ công cụ mới biết, mã không có thì công cụ sẽ báo lỗi.
 3. Gọi get_open_batches, get_shift_hours, get_available_machines để đọc dữ liệu (có thể gọi cùng lúc),
-   rồi gọi calculate_min_required_rate. Tốc độ tối thiểu và máy đề xuất phải lấy từ công cụ này.
+   rồi LUÔN gọi calculate_min_required_rate, kể cả khi không còn lô hay ca đã hết giờ. Tốc độ tối thiểu, máy đề xuất
+   và kết luận khả thi hay không phải lấy từ công cụ này.
 4. Nếu công cụ trả lỗi (ok=false), nói rõ lỗi cho người dùng. Không bịa kết quả.
 5. Theo status của calculate_min_required_rate:
    - ok: nêu tốc độ tối thiểu, phép tính ở tốc độ đó và ở tốc độ thấp hơn 1 (check_at_min, check_below_min),
@@ -69,4 +72,5 @@ SPEC = AgentSpec(
     mock_planner=planner,
     approval_handlers={PROPOSAL_KIND: approve_machine_booking},
     seed=seed_capacity,
+    id_patterns=(LINE_ID, SHIFT_ID),
 )
