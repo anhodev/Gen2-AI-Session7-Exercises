@@ -1,5 +1,5 @@
 // Gọi FastAPI. Cách viết lấy từ buổi 4: một hàm request() dùng chung, đọc lỗi từ "detail".
-import type { Health, InvoiceData, Module, Proposal, ProposalStatus, RunDetail, SampleQuestion } from "./types";
+import type { CapacityData, Health, InvoiceData, MachineChange, Module, Proposal, ProposalStatus, RunDetail, SampleQuestion } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
@@ -56,4 +56,14 @@ export const api = {
   invoiceSamples: () => request<SampleQuestion[]>("/invoices/samples"),
   invoiceData: () => request<InvoiceData>("/invoices/data"),
   resetInvoices: () => post<{ status: string; closed_proposals: number }>("/invoices/reset"),
+
+  // Bài 02
+  capacitySamples: () => request<SampleQuestion[]>("/capacity/samples"),
+  capacityData: () => request<CapacityData>("/capacity/data"),
+  resetCapacity: () => post<{ status: string; closed_proposals: number }>("/capacity/reset"),
+  /** Người dùng đổi máy trên UI để thử ca "dữ liệu đổi sau khi AI đọc". Không phải công cụ của AI. */
+  changeMachine: (id: string, change: MachineChange) =>
+    request<{ machine_id: string; rate_per_hour: number; status: string; version: number }>(
+      `/capacity/machines/${id}`, { method: "PATCH", body: JSON.stringify(change) },
+    ),
 };

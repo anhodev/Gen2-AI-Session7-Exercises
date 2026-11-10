@@ -11,12 +11,13 @@ import { setDisplayTimezone } from "@/lib/format";
 import type { Health } from "@/lib/types";
 import { Empty } from "@/components/ui";
 import { InvoicesPage } from "@/components/invoices";
+import { CapacityPage } from "@/components/capacity";
 
 type View = "invoices" | "capacity" | "notifications" | "incidents" | "history";
 
 const NAV: { id: View; label: string; icon: LucideIcon; ready: boolean }[] = [
   { id: "invoices", label: "01 · Đối soát hóa đơn", icon: ReceiptText, ready: true },
-  { id: "capacity", label: "02 · Công suất máy", icon: Factory, ready: false },
+  { id: "capacity", label: "02 · Công suất máy", icon: Factory, ready: true },
   { id: "notifications", label: "03 · Lịch gửi thông báo", icon: BellRing, ready: false },
   { id: "incidents", label: "04 · Tác động sự cố", icon: Network, ready: false },
 ];
@@ -86,7 +87,8 @@ export default function Home() {
         )}
         {/* Giữ trang đã mở để không mất hội thoại khi chuyển qua lại giữa các bài */}
         <div hidden={view !== "invoices"}><InvoicesPage /></div>
-        {view !== "invoices" && <section className="panel"><Empty icon={Wrench} text="Đang làm, sẽ có ở các bước sau." /></section>}
+        <div hidden={view !== "capacity"}><CapacityPage /></div>
+        {!["invoices", "capacity"].includes(view) && <section className="panel"><Empty icon={Wrench} text="Đang làm, sẽ có ở các bước sau." /></section>}
       </main>
     </div>
   );

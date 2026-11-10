@@ -128,3 +128,67 @@ export interface InvoiceData {
   invoices: InvoiceRow[];
   transfers: TransferRow[];
 }
+
+// --- Bài 02: công suất máy ---------------------------------------------------------
+
+export type MachineStatus = "available" | "busy" | "maintenance" | "reserved";
+
+export interface MachineView {
+  machine_id: string;
+  name: string;
+  rate_per_hour: number;
+  status: MachineStatus;
+  version: number;
+  hours_needed?: number;
+}
+
+export interface RateCheck {
+  rate: number;
+  hours_per_batch: number[];
+  total_hours: number;
+  fits: boolean;
+  calculation: string; // "3 + 1 + 3 + 1 = 8 giờ"
+}
+
+export interface SearchStep {
+  low: number;
+  high: number;
+  mid: number;
+  hours: number;
+  fits: boolean;
+}
+
+export type RateStatus = "ok" | "no_open_batches" | "impossible_under_rules" | "no_machine_fast_enough";
+
+/** Kết quả công cụ calculate_min_required_rate */
+export interface RateResult {
+  line_id: string;
+  shift_id: string;
+  shift_name: string;
+  hours_left: number;
+  status: RateStatus;
+  min_rate: number | null;
+  reason: string;
+  batches: { batch_id: string; product: string; quantity: number }[];
+  zero_batches: { batch_id: string; product: string; note: string }[];
+  check_at_min: RateCheck | null;
+  check_below_min: RateCheck | null;
+  search_steps: SearchStep[];
+  chosen_machine: MachineView | null;
+  fast_enough: MachineView[];
+  too_slow: MachineView[];
+  data_changed: { machine_id: string; before: string; now: string }[];
+  rule: string;
+}
+
+export interface CapacityData {
+  lines: { line_id: string; name: string }[];
+  shifts: { shift_id: string; line_id: string; name: string; hours_left: number }[];
+  batches: { batch_id: string; line_id: string; product: string; quantity: number; status: "open" | "done" }[];
+  machines: (MachineView & { line_id: string; reserved_shift_id: string | null })[];
+}
+
+export interface MachineChange {
+  rate_per_hour?: number;
+  status?: "available" | "busy" | "maintenance";
+}
