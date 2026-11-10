@@ -3,16 +3,17 @@
 // Khung trang lấy từ buổi 4: sidebar tối + topbar + nội dung theo từng màn hình.
 import { useEffect, useState } from "react";
 import {
-  AlertTriangle, BellRing, Bot, Command, Database, Factory, History, Menu, Network, ReceiptText, Wrench, X,
+  AlertTriangle, BellRing, Bot, Command, Database, Factory, History, Menu, Network, ReceiptText, X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { api } from "@/lib/api";
 import { setDisplayTimezone } from "@/lib/format";
 import type { Health } from "@/lib/types";
-import { Empty } from "@/components/ui";
 import { InvoicesPage } from "@/components/invoices";
 import { CapacityPage } from "@/components/capacity";
 import { NotificationsPage } from "@/components/notifications";
+import { IncidentsPage } from "@/components/incidents";
+import { HistoryPage } from "@/components/history";
 
 type View = "invoices" | "capacity" | "notifications" | "incidents" | "history";
 
@@ -20,7 +21,7 @@ const NAV: { id: View; label: string; icon: LucideIcon; ready: boolean }[] = [
   { id: "invoices", label: "01 · Đối soát hóa đơn", icon: ReceiptText, ready: true },
   { id: "capacity", label: "02 · Công suất máy", icon: Factory, ready: true },
   { id: "notifications", label: "03 · Lịch gửi thông báo", icon: BellRing, ready: true },
-  { id: "incidents", label: "04 · Tác động sự cố", icon: Network, ready: false },
+  { id: "incidents", label: "04 · Tác động sự cố", icon: Network, ready: true },
 ];
 
 const TITLES: Record<View, [string, string]> = {
@@ -90,7 +91,9 @@ export default function Home() {
         <div hidden={view !== "invoices"}><InvoicesPage /></div>
         <div hidden={view !== "capacity"}><CapacityPage /></div>
         <div hidden={view !== "notifications"}><NotificationsPage /></div>
-        {!["invoices", "capacity", "notifications"].includes(view) && <section className="panel"><Empty icon={Wrench} text="Đang làm, sẽ có ở các bước sau." /></section>}
+        <div hidden={view !== "incidents"}><IncidentsPage /></div>
+        {/* Lịch sử đọc lại mỗi lần mở để thấy câu hỏi vừa hỏi ở các bài */}
+        {view === "history" && <HistoryPage />}
       </main>
     </div>
   );

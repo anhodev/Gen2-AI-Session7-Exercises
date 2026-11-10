@@ -1,5 +1,8 @@
 // Gọi FastAPI. Cách viết lấy từ buổi 4: một hàm request() dùng chung, đọc lỗi từ "detail".
-import type { CapacityData, Health, InvoiceData, MachineChange, Module, NotificationData, Proposal, ProposalStatus, RunDetail, SampleQuestion } from "./types";
+import type {
+  CapacityData, Health, IncidentData, IncidentStatus, InvoiceData, MachineChange, Module, NotificationData, Proposal,
+  ProposalStatus, Run, RunDetail, SampleQuestion,
+} from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
@@ -46,6 +49,8 @@ export const api = {
   // Chat dùng chung cho cả 4 bài
   chat: (module: Module, question: string, conversationId: string | null) =>
     post<RunDetail>("/chat", { module, question, conversation_id: conversationId }),
+  runs: (module?: Module, limit = 50) =>
+    request<Run[]>(`/runs?limit=${limit}${module ? `&module=${module}` : ""}`),
   run: (id: number) => request<RunDetail>(`/runs/${id}`),
   proposals: (module: Module, status?: ProposalStatus) =>
     request<Proposal[]>(`/proposals?module=${module}${status ? `&status=${status}` : ""}`),
@@ -78,5 +83,16 @@ export const api = {
   changeSource: (sourceId: string, available: boolean) =>
     request<{ source_id: string; available: boolean }>(
       `/notifications/sources/${sourceId}`, { method: "PATCH", body: JSON.stringify({ available }) },
+    ),
+
+  // Bài 04. Công bố sơ đồ mới và đổi trạng thái sự cố là thao tác của người dùng, không phải công cụ của AI.
+  incidentSamples: () => request<SampleQuestion[]>("/incidents/samples"),
+  incidentData: () => request<IncidentData>("/incidents/data"),
+  resetIncidents: () => post<{ status: string; closed_proposals: number }>("/incidents/reset"),
+  publishGraph: (systemId: string) =>
+    post<{ system_id: string; before: number; current_version: number }>(`/incidents/systems/${systemId}/publish`),
+  changeIncident: (incidentId: string, status: IncidentStatus) =>
+    request<{ incident_id: string; status: IncidentStatus }>(
+      `/incidents/${incidentId}`, { method: "PATCH", body: JSON.stringify({ status }) },
     ),
 };

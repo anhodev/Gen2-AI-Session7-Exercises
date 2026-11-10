@@ -169,6 +169,8 @@ def test_samples_and_data(client):
     shop = next(s for s in data["systems"] if s["system_id"] == "SHOP")
     assert shop == {"system_id": "SHOP", "name": shop["name"], "current_version": 7, "next_version": 8}
     assert len(data["incidents"]) == 6
+    inc9 = next(i for i in data["incidents"] if i["incident_id"] == "INC-9")
+    assert inc9["started_at"] == "2026-11-10T08:15:00+07:00"  # đổi sang APP_TIMEZONE, ghi kèm múi giờ
 
 
 def test_publish_without_newer_version(client):

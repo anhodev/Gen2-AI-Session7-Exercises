@@ -255,3 +255,53 @@ export interface NotificationData {
     status: "pending" | "scheduled"; scheduled_at: string | null;
   }[];
 }
+
+// --- Bài 04: tác động sự cố -------------------------------------------------------
+
+export type IncidentStatus = "investigating" | "monitoring" | "resolved";
+
+export interface ImpactPath {
+  service_id: string;
+  name: string;
+  distance: number;
+  path: string[];
+  path_text: string; // "DB → Auth → MobileApp"
+}
+
+export interface BfsStep {
+  service: string;
+  distance: number;
+  discovered: string[];
+  already_seen: string[]; // cạnh dẫn về điểm đã đi qua (vòng hoặc nhiều đường)
+}
+
+/** Kết quả công cụ trace_impact */
+export interface ImpactResult {
+  incident_id: string;
+  incident_status: IncidentStatus;
+  incident_status_label: string;
+  system_id: string;
+  failed_service: string;
+  graph_version: number;
+  graph_captured_at: string;
+  status: "ok" | "incomplete_data";
+  impacted: ImpactPath[];
+  all_reached: { service_id: string; distance: number; path_text: string }[];
+  not_reached: { service_id: string; reason: string }[];
+  layers: string[][];
+  bfs_steps: BfsStep[];
+  duplicate_edges: { from: string; to: string }[];
+  counts: { services: number; edges: number; unique_edges: number };
+  warnings: { code: string; message: string }[];
+  graph_changed: { before: number; now: number } | null;
+  note: string;
+  rule: string;
+}
+
+export interface IncidentData {
+  systems: { system_id: string; name: string; current_version: number; next_version: number | null }[];
+  services: { system_id: string; service_id: string; name: string; customer_facing: boolean }[];
+  graphs: { system_id: string; version: number; captured_at: string; note: string | null; edges: { from: string; to: string }[] }[];
+  incidents: { incident_id: string; system_id: string; service_id: string; title: string; status: IncidentStatus; started_at: string }[];
+  notes: { note_id: number; incident_id: string; graph_version: number; status: string; impacted: { service_id: string; distance: number; path: string[] }[]; created_at: string }[];
+}

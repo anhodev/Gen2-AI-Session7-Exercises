@@ -13,18 +13,20 @@ Không có API khởi động lại hay sửa dịch vụ.
 from __future__ import annotations
 
 from typing import Literal
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db
+from app.core.dependencies import get_db, get_display_tz
 from app.core.entities import Proposal, now_utc
 from app.core.proposals import PENDING, REJECTED
 
 from .entities import GraphEdge, GraphVersion, ImpactNote, Incident, Service, ServiceSystem
 from .store import load_sample_file, next_version, seed_incidents
+from .tools import local_iso
 
 router = APIRouter(prefix="/incidents", tags=["Bài 04 - Tác động sự cố"])
 
@@ -42,8 +44,8 @@ def samples():
 
 
 @router.get("/data")
-def data(db: Session = Depends(get_db)):
-    """Hệ thống, dịch vụ, sơ đồ, sự cố hiện có (dữ liệu giả). Thời gian trả theo UTC."""
+def data(db: Session = Depends(get_db), tz: ZoneInfo = Depends(get_display_tz)):
+    """Hệ thống, dịch vụ, sơ đồ, sự cố hiện có (dữ liệu giả). Thời gian đổi sang APP_TIMEZONE, ghi kèm múi giờ."""
     edges: dict[tuple[str, int], list] = {}
     for e in db.scalars(select(GraphEdge).order_by(GraphEdge.id)):
         edges.setdefault((e.system_id, e.version), []).append({"from": e.source, "to": e.target})
@@ -58,18 +60,18 @@ def data(db: Session = Depends(get_db)):
             for s in db.scalars(select(Service).order_by(Service.system_id, Service.id))
         ],
         "graphs": [
-            {"system_id": g.system_id, "version": g.version, "captured_at": g.captured_at, "note": g.note,
+            {"system_id": g.system_id, "version": g.version, "captured_at": local_iso(g.captured_at, tz), "note": g.note,
              "edges": edges.get((g.system_id, g.version), [])}
             for g in db.scalars(select(GraphVersion).order_by(GraphVersion.system_id, GraphVersion.version))
         ],
         "incidents": [
             {"incident_id": i.id, "system_id": i.system_id, "service_id": i.service_id, "title": i.title,
-             "status": i.status, "started_at": i.started_at}
+             "status": i.status, "started_at": local_iso(i.started_at, tz)}
             for i in db.scalars(select(Incident).order_by(Incident.id))
         ],
         "notes": [
             {"note_id": n.id, "incident_id": n.incident_id, "graph_version": n.graph_version, "status": n.status,
-             "impacted": n.impacted, "created_at": n.created_at}
+             "impacted": n.impacted, "created_at": local_iso(n.created_at, tz)}
             for n in db.scalars(select(ImpactNote).order_by(ImpactNote.id))
         ],
     }
